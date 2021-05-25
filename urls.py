@@ -4,6 +4,6 @@ from . import views
 app_name = 'apollo'
 urlpatterns = [
                 path('', views.homepage, name = 'homepage'),
-                path('login', views.emploginpage, name = 'emploginpage'),
-                path('login', views.patloginpage, name = 'patloginpage'),
+                path('emploginpage', views.emploginpage, name = 'emploginpage'),
+                path('patloginpage', views.patloginpage, name = 'patloginpage'),
 ]
