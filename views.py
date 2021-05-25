@@ -19,3 +19,13 @@ def emploginpage(request):
             post = Employee(emp_name=request.POST.get('Full Name'))
     else:
         return render(request, 'apollo/emploginpage.html')
+
+def emploginpage(request):
+    if request.method == "POST":
+        if request.POST.get('EmpID'):
+            post = Employee(emp_id=request.POST.get('EmpID'))
+            post.save()
+        if request.POST.get('Full Name'):
+            post = Employee(emp_name=request.POST.get('Full Name'))
+    else:
+        return render(request, 'apollo/emploginpage.html')
