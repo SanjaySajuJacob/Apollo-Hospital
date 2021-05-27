@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 body {
   height: 100%;
+  background-size: 1550px 768px;
+  background-position: center;
 }
 
 body {
@@ -8,7 +10,9 @@ body {
   align-items: center;
   padding-top: 40px;
   padding-bottom: 40px;
-  background-color: #f5f5f5;
+  background-color: #035DAB;
+  background-size: 1550px 768px;
+  background-image: url("/static/apollo/Amazing-Blue-BG.png") !important
 }
 
 .form-signin {
