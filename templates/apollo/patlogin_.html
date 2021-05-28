@@ -39,7 +39,7 @@
   <body class="text-center">
 
 <main class="form-signin">
-    <h1 class="h1 mb-3 fw-normal text-white" style = "font-family:sans-serif">Please Register</h1>
+    <h1 class="h1 mb-3 fw-normal text-white" style = "font-family:sans-serif">Please sign in</h1>
     <form method = "POST", action = ""> {% csrf_token %}
     <div class="form-floating">
       <input type="text" name = "PatID" class="form-control text-center" id="floatingInput" style = "height:45px; padding: 5px 5px 5px 5px;"><br>
@@ -49,45 +49,15 @@
       <input type="text" name = "Patient Name"class="form-control text-center" id="floatingInput" style = "height:45px; padding: 5px 5px 5px 5px;"><br>
       <label for="floatingInput">Full Name</label>
     </div>
-    <div class="form-floating">
-      <input type="text" name = "Age"class="form-control text-center" id="floatingInput" style = "height:45px; padding: 5px 5px 5px 5px;"><br>
-      <label for="floatingInput">Age</label>
-    </div>
-    <div class="form-floating">
-      <input type="text" name = "Ph No"class="form-control text-center" id="floatingInput" style = "height:45px; padding: 5px 5px 5px 5px;"><br>
-      <label for="floatingInput">Phone Number</label>
-    </div>
-    <div class="form-floating">
-      <input type="text" name = "Profession"class="form-control text-center" id="floatingInput" style = "height:45px; padding: 5px 5px 5px 5px;"><br>
-      <label for="floatingInput">Profession</label>
-    </div>
-    <div class="dropdown">
-      <!-- <button class="btn btn-light dropdown-toggle" name = "Room" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
-        Room Type
-      </button>
-      <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-        <li><a class="dropdown-item" href="#">Single Bedded</a></li>
-        <li><a class="dropdown-item" href="#">Double Bedded</a></li>
-        <li><a class="dropdown-item" href="#">General Ward</a></li>
-        <li><a class="dropdown-item" href="#">ICU</a></li>
-      </ul> -->
-      <select class="form-control text-center" name="Room">
-        <option name="Default">-- Select a room type --</option>
-        <option value="Single Bedded">Single Bedded</option>
-        <option value="Double Bedded">Double Bedded</option>
-        <option value="General Ward">General Ward</option>
-        <option value="ICU">ICU</option>
-      </select>
-    </div>
     <br>
     <button class="w-100 btn btn-lg btn-dark" value = "POST" type="submit">Sign in</button>
-    <br>
-    {% if error_message %}<p><strong>{{error_message}}</strong></p>{% endif %}
     </form>
     <br>
-    <div class = "text-center text-white">
-      Already have an account? <a href = "{%url 'apollo:patloginpage_' %}">Login Here</a>
+    {% if not proceed%}
+    <div class = "badge bg-danger fs-5 fw-bold text-center">
+        {{ message }}
     </div>
+    {% endif %}
 </main>
 
 

@@ -1,6 +1,7 @@
 from django.db import models
 import datetime
 from django.utils import timezone
+from django.contrib.auth.models import AbstractUser
 
 # Create your models here.
 class Employee(models.Model):
@@ -56,3 +57,9 @@ class CovApply(models.Model):
     covid_test_result = models.CharField(max_length = 10)
     def __str__(self):
         return self.patient_id
+
+class Leave(models.Model):
+    emp_id = models.ForeignKey(Employee, on_delete = models.CASCADE)
+    start_date = models.DateTimeField('start date')
+    end_date = models.DateTimeField('end date')
+    reason_for_leave = models.CharField(max_length = 1000)

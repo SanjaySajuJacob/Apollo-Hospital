@@ -5,6 +5,7 @@ from django.template import loader
 from django.urls import reverse
 from django.views import generic
 from .models import Employee, Patients, Accomodation
+from django.contrib import messages
 # Create your views here.
 
 def homepage(request):
@@ -34,6 +35,21 @@ def patloginpage(request):
             post.profession = request.POST.get('Profession')
             post.room_type = Accomodation(request.POST.get('Room'))
             post.save()
-            return render(request, 'apollo/patlogin.html')
+            return render(request, 'apollo/base.html')
     else:
         return render(request, 'apollo/patlogin.html')
+
+def patloginpage_(request):
+    proceed = True
+    if request.method == "POST":
+        if request.POST.get('PatID') and request.POST.get('Patient Name'):
+            post = Patients()
+            p = request.POST.get('PatID')
+            q = request.POST.get('Patient Name')
+            if p in post.patient_id and q in post.patient_name:
+                return render(request, 'apollo/base.html', {'proceed':proceed})
+            else:
+                proceed = False
+                return render(request, 'apollo/patlogin_.html', {'proceed':proceed, 'message':'Invalid Patient ID or Patient Name'})
+    else:
+        return render(request, 'apollo/patlogin_.html', {'proceed': proceed})
