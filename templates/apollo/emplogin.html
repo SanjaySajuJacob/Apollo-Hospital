@@ -1,69 +1,26 @@
-<!doctype html>
-<html lang="en">
+{% extends 'apollo/header.html' %}
 
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="">
-    <meta name="author" content="Mark Otto, Jacob Thornton, and Bootstrap contributors">
-    <meta name="generator" content="Hugo 0.82.0">
-
-    <link rel="canonical" href="https://getbootstrap.com/docs/5.0/examples/sign-in/">
-
-
-
-    {% load static %}
-    <link href="{% static 'apollo/css/bootstrap.min.css' %}" rel="stylesheet">
-
-    <style>
-      .bd-placeholder-img {
-        font-size: 1.125rem;
-        text-anchor: middle;
-        -webkit-user-select: none;
-        -moz-user-select: none;
-        user-select: none;
-      }
-
-      @media (min-width: 768px) {
-        .bd-placeholder-img-lg {
-          font-size: 3.5rem;
-        }
-      }
-    </style>
-
-
-    <!-- Custom styles for this template -->
-    <link href="{% static 'apollo/login.css' %}" rel="stylesheet">
-  </head>
-  <body class="d-flex h-100 text-center p-3 mb-2">
-<div class="cover-container d-flex w-100 h-100 p-3 mx-auto flex-column">
-<main class="form-signin">
-    <h1 class="h1 mb-3 fw-normal text-white" style = "font-family:sans-serif">Please sign in</h1>
-    <form method = "POST" action = ""> {% csrf_token %}
-    <div class="form-floating">
-      <input type="text" name = "EmpID" class="form-control text-center" id="floatingInput" style = "height:45px; padding: 5px 5px 5px 5px;"><br>
-      <label for="floatingInput">Employee ID</label>
+{% load crispy_forms_tags %}
+{% block content %}
+<body style="background-image: url('/static/apollo/Amazing-Blue-BG.png'); background-size: 1550px 768px; background-position: center; height: 100%;">
+<img class = "Logo" src = "/static/apollo/Apollo_Logo.png" alt = "Apollo Hospital" align = "right" style = "width: 100px; height: 100px; border-radius: 50%;">
+<div class = "container py-5 ">
+  <h1 class = "text-white">Login</h1><br><br><br>
+  <form method = "POST">
+    {% csrf_token %}
+    <div class = "form-row align-center text-white">
+      <div class = "form-group col-md-4 mb-0">
+        {{ form.employee_id|as_crispy_field }}
+      </div>
     </div>
-    <div class="form-floating">
-      <input type="text" name = "Full Name"class="form-control text-center" id="floatingInput" style = "height:45px; padding: 5px 5px 5px 5px;">
-      <label for="floatingInput">Full Name</label>
-    </div>
-    <br>
-    <div class="form-floating">
-      <input type="text" name = "Designation"class="form-control text-center" id="floatingInput" style = "height:45px; padding: 5px 5px 5px 5px;">
-      <label for="floatingInput">Designation</label>
-    </div>
-    <br>
-    <div class="form-floating">
-      <input type="text" name = "Department"class="form-control text-center" id="floatingInput" style = "height:45px; padding: 5px 5px 5px 5px;">
-      <label for="floatingInput">Department</label>
-    </div>
-    <br>
-    <button class="w-100 btn btn-lg btn-dark" value = "POST" type="submit">Sign in</button>
-    {% if error_message %}<p><strong>{{error_message}}</strong></p>{% endif %}
-    </form>
-</main>
+    <div class = "form-row align-center text-white">
+      <div class = "form-group col-md-4 mb-0">
+        {{ form.password|as_crispy_field }}
+      </div>
+    </div><br><br>
+    <button class = "btn btn-primary" type = "submit">Login</button>
+  </form>
+  <br><br><br><br><br><br><br><br><br>
 </div>
 
-  </body>
-</html>
+{% endblock %}

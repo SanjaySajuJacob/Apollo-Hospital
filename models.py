@@ -2,6 +2,7 @@ from django.db import models
 import datetime
 from django.utils import timezone
 from django.contrib.auth.models import AbstractUser
+from django.core.validators import RegexValidator
 
 # Create your models here.
 class Employee(models.Model):
@@ -9,6 +10,7 @@ class Employee(models.Model):
     emp_name = models.CharField(max_length = 100)
     designation = models.CharField(max_length = 100)
     department = models.CharField(max_length = 100)
+    password = models.CharField(max_length = 1000, default = "")
     def __str__(self):
         return self.emp_id
 
@@ -23,9 +25,10 @@ class Patients(models.Model):
     patient_id = models.CharField(max_length = 100, primary_key = True)
     patient_name = models.CharField(max_length = 100)
     room_type = models.ForeignKey(Accomodation, on_delete = models.CASCADE)
-    age = models.IntegerField(default = 0)
-    phone_no = models.IntegerField(default = 9999999999)
+    age = models.IntegerField()
+    phone_no = models.CharField(max_length = 10)
     profession = models.CharField(max_length = 100)
+    password = models.CharField(max_length = 1000)
     def __str__(self):
         return self.patient_id
 
@@ -39,7 +42,7 @@ class PatFinance(models.Model):
     patient_id = models.ForeignKey(Patients, on_delete = models.CASCADE)
     payment_method = models.CharField(max_length = 100)
     amount_paid = models.IntegerField(default = 0)
-    date = models.DateTimeField('payment_date')
+    date = models.DateField('payment_date')
     payment_id = models.CharField(max_length = 100)
     def __str__(self):
         return self.patient_id

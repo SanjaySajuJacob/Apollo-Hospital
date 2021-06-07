@@ -12,13 +12,13 @@ class EmpFinanceAdmin(admin.ModelAdmin):
     fieldsets = [(None, {'fields':['emp_id', 'salary']})]
 
 class EmployeeAdmin(admin.ModelAdmin):
-    fieldsets = [(None, {'fields':['emp_id', 'emp_name', 'designation', 'department']})]
+    fieldsets = [(None, {'fields':['emp_id', 'emp_name', 'designation', 'department', 'password']})]
 
 class PatFinanceAdmin(admin.ModelAdmin):
     fieldsets = [(None, {'fields':['patient_id', 'payment_method', 'amount_paid', 'date']})]
 
 class PatientsAdmin(admin.ModelAdmin):
-    fieldsets = [(None, {'fields':['patient_id', 'patient_name', 'room_type', 'age', 'phone_no', 'profession']})]
+    fieldsets = [(None, {'fields':['patient_id', 'patient_name', 'room_type', 'age', 'phone_no', 'profession', 'password']})]
 
 class VaccinesAdmin(admin.ModelAdmin):
     fieldsets = [(None, {'fields':['vaccine_name', 'vaccine_stock', 'vaccine_cost']})]
