@@ -1,65 +1,36 @@
-from django.shortcuts import render, redirect
+
+from django.shortcuts import render, get_object_or_404
+from django.http import HttpResponse, HttpResponseRedirect
+from .models import Question, Choice
+from django.template import loader
 from django.urls import reverse
-from .models import Employee, Patients, Accomodation
-from django.contrib import messages
-from .forms import NewUserForm, EmpLoginForm, PatLoginForm
-from django.contrib.auth import login
-from django import forms
-import re
+from django.views import generic
 # Create your views here.
+class DetailView(generic.DetailView):
+    model = Question
+    template_name = 'polls/detail.html'
 
-def homepage(request):
-    return render(request, 'apollo/welcome.html')
+class ResultsView(generic.DetailView):
+    model = Question
+    template_name = 'polls/results.html'
 
-def emploginpage(request):
-    if request.method == "POST":
-        form = EmpLoginForm(request.POST)
-        if form.is_valid():
-            emp_id = request.POST.get('employee_id')
-            pw = request.POST.get('password')
-            if Employee.objects.filter(emp_id=emp_id, password=pw).count() == 1:
-                messages.success(request, "Logged in successfully")
-                return redirect("apollo:homepage")
+def vote(request, question_id):
+        question = get_object_or_404(Question, pk=question_id)
+        try:
+            selected_choice = question.choice_set.get(pk=request.POST['choice'])
+        except (KeyError, Choice.DoesNotExist):
+            return render(request, 'polls/detail.html', {
+                'question': question,
+                'error_message': "You didn't select a choice.",
+                })
         else:
-            messages.error(request, "Invalid Login Credentials. Please try again.")
-    else:
-        form = EmpLoginForm
-    return render(request=request, template_name="apollo/emplogin.html", context = {'form':form})
+            selected_choice.votes += 1
+            selected_choice.save()
+            return HttpResponseRedirect(reverse('polls:results', args=(question.id, )))
 
+class IndexView(generic.ListView):
+    template_name = 'polls/index.html'
+    context_object_name = 'question_list'
 
-def patregisterpage(request):
-    if request.method == "POST":
-        input_data = request.POST.dict()
-        input_data.pop("csrfmiddlewaretoken", None)
-        input_data.pop("confirm_Password", None)
-        input_data["room_type"] = Accomodation.objects.get(room_type=input_data["room_type"])
-        pat = Patients(**input_data)
-        form = NewUserForm(instance = pat)
-        if form.is_valid():
-            print("Form valid")
-            user = form.save()
-            user.save()
-            login(request, user)
-            messages.success(request, "Registration successful!!")
-            return redirect("apollo:homepage")
-        else:
-            messages.error(request, "Registration unsuccessful. Please make sure you enter valid details, and try again")
-            return render(request, "apollo/patregister.html", context = {'form':form})
-    else:
-        form = NewUserForm
-    return render(request=request, template_name="apollo/patregister.html", context = {"form":form})
-
-def patloginpage(request):
-    if request.method == "POST":
-        form = PatLoginForm(request.POST)
-        if form.is_valid():
-            patient_id = request.POST.get('patient_id')
-            pw = request.POST.get('password')
-            if Patients.objects.filter(patient_id=patient_id, password=pw).count() == 1:
-                messages.success(request, "Logged in successfully")
-                return redirect("apollo:homepage")
-        else:
-            messages.error(request, "Invalid Login Credentials. Please try again.")
-    else:
-        form = PatLoginForm
-    return render(request=request, template_name="apollo/patlogin.html", context = {'form':form})
+    def get_queryset(self):
+        return Question.objects.order_by('-pub_date')[:5]
