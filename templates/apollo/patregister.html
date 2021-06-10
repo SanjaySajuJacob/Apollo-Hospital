@@ -1,0 +1,58 @@
+{% extends 'apollo/header.html' %}
+{% load crispy_forms_tags %}
+{% block content %}
+<body style="background-image: url('/static/apollo/Amazing-Blue-BG.png'); background-size: 1550px 1500px; background-position: center; height: 100%;">
+<img class = "Logo" src = "/static/apollo/JLSS.png" alt = "Apollo Hospital" align = "right" style = "width: 75px; height: 75px; border-radius: 50%;">
+<div class="container py-5">
+  <h1 class = "text-white">Register</h1><br>
+  <form method = "POST">
+    {% csrf_token %}
+    <div class = "text-white" style = "font-family:'Helvetica'">
+    <div class = "form-row align-center">
+      <div class = "form-group col-md-4 mb-0">
+        {{ form.patient_id|as_crispy_field }}
+      </div>
+    </div>
+    <div class = "form-row align-center">
+      <div class = "form-group col-md-4 mb-0">
+        {{ form.patient_name|as_crispy_field }}
+      </div>
+    </div>
+    <div class = "form-row align-center">
+      <div class = "form-group col-md-1 mb-0">
+        {{ form.age|as_crispy_field }}
+      </div>
+    </div>
+    <div class = "form-row align-center">
+      <div class = "form-group col-md-3  mb-0">
+        {{ form.phone_no|as_crispy_field }}
+      </div>
+    </div>
+    <div class = "form-row align-center">
+      <div class = "form-group col-md-4 mb-0">
+        {{ form.profession|as_crispy_field }}
+      </div>
+    </div>
+    <div class = "form-row align-center">
+      <div class = "form-group col-md-4 mb-0">
+        {{ form.room_type | as_crispy_field }}
+      </div>
+    </div>
+    <div class = "form-row align-center">
+      <div class = "form-group col-md-4 mb-0">
+        {{ form.password|as_crispy_field }}
+      </div>
+    </div>
+    <div class = "form-row align-center">
+      <div class = "form-group col-md-4 mb-0">
+        {{ form.confirm_Password|as_crispy_field }}
+      </div>
+    </div>
+    <button class = "btn btn-primary" type = "submit">Register</button>
+  </div>
+  </form>
+  <br><br>
+  <p class = "text-center text-white" style = "font-family:Helvetica">Already have an account? <a href = "/apollo/patlogin" style = "color:cyan">Login here</a></p>
+</div>
+
+{% endblock %}

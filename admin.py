@@ -1,14 +1,32 @@
 from django.contrib import admin
-from .models import Choice, Question
+from django.db import models
+from .models import Accomodation, CovApply, EmpFinance, Employee, PatFinance, Patients, Vaccines
 # Register your models here.
-class ChoiceInline(admin.TabularInline):
-    model = Choice
-    extra = 3
+class AccomodationAdmin(admin.ModelAdmin):
+    fieldsets = [(None, {'fields':['room_type', 'no_of_beds_left', 'cost']})]
 
-class QuestionAdmin(admin.ModelAdmin):
-    fieldsets = [(None, {'fields':['question_text']}),
-    ('Date Information', {'fields': ['pub_date'], 'classes': ['collapse']}),
-    ]
-    inlines = [ChoiceInline]
+class CovApplyAdmin(admin.ModelAdmin):
+    fieldsets = [(None, {'fields':['patient_id', 'vaccine_name', 'covid_test_result']})]
 
-admin.site.register(Question, QuestionAdmin)
+class EmpFinanceAdmin(admin.ModelAdmin):
+    fieldsets = [(None, {'fields':['emp_id', 'salary']})]
+
+class EmployeeAdmin(admin.ModelAdmin):
+    fieldsets = [(None, {'fields':['emp_id', 'emp_name', 'designation', 'department', 'password']})]
+
+class PatFinanceAdmin(admin.ModelAdmin):
+    fieldsets = [(None, {'fields':['patient_id', 'payment_method', 'amount_paid', 'date']})]
+
+class PatientsAdmin(admin.ModelAdmin):
+    fieldsets = [(None, {'fields':['patient_id', 'patient_name', 'room_type', 'age', 'phone_no', 'profession', 'password']})]
+
+class VaccinesAdmin(admin.ModelAdmin):
+    fieldsets = [(None, {'fields':['vaccine_name', 'vaccine_stock', 'vaccine_cost']})]
+
+admin.site.register(Accomodation, AccomodationAdmin)
+admin.site.register(CovApply, CovApplyAdmin)
+admin.site.register(EmpFinance, EmpFinanceAdmin)
+admin.site.register(Employee, EmployeeAdmin)
+admin.site.register(PatFinance, PatFinanceAdmin)
+admin.site.register(Patients, PatientsAdmin)
+admin.site.register(Vaccines, VaccinesAdmin)
