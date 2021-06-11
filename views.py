@@ -1,11 +1,12 @@
 from django.shortcuts import render, redirect
 from django.urls import reverse
-from .models import Employee, Patients, Accomodation
+from .models import Employee, Patients, Accomodation, PatFinance
 from django.contrib import messages
-from .forms import NewUserForm, EmpLoginForm, PatLoginForm
+from .forms import NewUserForm, EmpLoginForm, PatLoginForm, PaymentForm
 from django.contrib.auth import login
 from django import forms
-import re
+from django.utils import timezone
+import random
 # Create your views here.
 
 def homepage(request):
@@ -65,3 +66,26 @@ def patloginpage(request):
     else:
         form = PatLoginForm
     return render(request=request, template_name="apollo/patlogin.html", context = {'form':form})
+
+def paymentpage(request):
+    if request.method == "POST":
+        form = PaymentForm(request.POST)
+        if form.is_valid():
+            paid = True
+            patient_id = Patients.objects.get(patient_id=request.POST.get('patient_id'))
+            room = Patients.objects.values('room_type').filter(patient_id=patient_id)
+            days = request.POST.get('no_of_days')
+            accomodate = Accomodation.objects.get(room_type = room[0]["room_type"])
+            patfin = PatFinance()
+            patfin.amount_paid = int(days)*int((accomodate.cost))
+            patfin.patient_id = patient_id
+            patfin.payment_method = request.POST.get('payment_method')
+            patfin.date = timezone.now()
+            patfin.payment_id = random.randint(1000, 9999)
+            message = "The total cost and your Payment ID are as shown. Kindly go to the payment counter to make your payment. Thank you."
+            return render(request, 'apollo/payment.html', context = {'paid':paid, 'message':message, 'cost':patfin.amount_paid, 'payment_id':patfin.payment_id, 'form':form})
+        else:
+            messages.error(request, "Something went wrong. Please try again")
+    else:
+        form = PaymentForm
+        return render(request, 'apollo/payment.html', context = {'form':form})

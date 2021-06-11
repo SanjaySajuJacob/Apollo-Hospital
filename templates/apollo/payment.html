@@ -1,0 +1,44 @@
+{% extends "apollo/header.html" %}
+
+{% block content %}
+<body style="background-image: url('/static/apollo/Amazing-Blue-BG.png'); background-size: cover; background-position: center; height: 100%;">
+<img class = "Logo" src = "/static/apollo/JLSS.png" alt = "JLSS Hospital" align = "right" style = "width: 75px; height: 75px; border-radius: 50%;">
+{% load crispy_forms_tags %}
+
+{% if paid %}
+  <br><br><br><br><br><br><br><br>
+  <h3 class = "text-white" align = "center"><span class="badge bg-success">{{message}}</span></h3><br>
+  <h3 class = "text-white" align = "center">Payment ID: {{payment_id}}</h3><br>
+  <h3 class = "text-white" align = "center">Cost: {{cost}}</h3><br><br><br><br><br><br><br><br><br><br><br><br>
+
+{% else %}
+<div class = "container py-5">
+  <h1 class = "text-white">Payment</h1><br>
+  <form method = "POST">
+    {% csrf_token %}
+    <div class = "text-white"  style = "font-family: 'Helvetica';">
+    <div class = "form-row align-center text-white">
+      <div class = "form-group col-md-3 mb-0">
+        {{ form.patient_id|as_crispy_field }}
+      </div>
+    </div>
+    </div>
+    <div class = "text-white" style = "font-family: 'Helvetica';">
+    <div class = "form-row align-center text-white">
+      <div class = "form-group col-md-2 mb-0">
+        {{ form.no_of_days|as_crispy_field }}
+      </div>
+    </div>
+    </div>
+    <div class = "text-white" style = "font-family: 'Helvetica';">
+    <div class = "form-row align-center text-white">
+      <div class = "form-group col-md-3 mb-0">
+        {{ form.payment_method|as_crispy_field }}
+      </div>
+    </div>
+    </div><br>
+    <button class = "btn btn-primary" type = "submit">Checkout</button>
+</div>
+{%endif%}
+
+{% endblock %}

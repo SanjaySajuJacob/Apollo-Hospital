@@ -4,9 +4,11 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit
-from .models import Patients, Accomodation
+from .models import Patients, Accomodation, PatFinance
+import random
 
 room_types = Accomodation.objects.filter(no_of_beds_left__gt = 0)
+payment_methods = (('None', 'Please select an option'),('Net Banking', 'Net Banking'), ('Cash', 'Cash'), ('Credit Card', 'Credit Card'), ('Debit Card', 'Debit Card'))
 
 class NewUserForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
@@ -14,7 +16,10 @@ class NewUserForm(forms.ModelForm):
         super(NewUserForm, self).__init__(*args, **kwargs)
         self.helper = FormHelper()
 
-    patient_id = forms.CharField(widget = forms.TextInput(attrs = {'placeholder':'Patient ID'}))
+    def random_id():
+        return str(random.randint(10000, 99999))
+    p = random_id()
+    patient_id = forms.CharField(widget = forms.TextInput(attrs = {'placeholder':'Patient ID', 'default': p}))
     patient_name =  forms.CharField(widget = forms.TextInput(attrs = {'placeholder':'Patient Name'}))
     age = forms.IntegerField(widget = forms.NumberInput(attrs = {'placeholder':'Age'}))
     phone_no = forms.CharField(widget = forms.TextInput(attrs = {'placeholder':'Phone Number'}))
@@ -78,3 +83,29 @@ class PatLoginForm(ModelForm):
         if commit:
             user.save()
         return user
+
+class PaymentForm(ModelForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper()
+
+    patient_id = forms.CharField(widget = forms.TextInput(attrs = {'placeholder':'Patient ID'}))
+    no_of_days = forms.IntegerField(widget = forms.NumberInput(attrs = {'placeholder':'No. of days stayed'}))
+    payment_method = forms.ChoiceField(choices = payment_methods)
+
+    class Meta:
+        model = User
+        fields = ("patient_id", "no_of_days", "payment_method")
+
+    def save(self, commit = True):
+        user = super(PatLoginForm, self).save(commit = False)
+        user.patient_id = self.cleaned_data['patient_id']
+        if commit:
+            user.save()
+        return user
+
+    def checkdays(self):
+        days = self.cleaned_data.get('no_of_days')
+        if (days <= 0):
+            raise forms.ValidationError("No. of days is either negative or 0")
+        return days

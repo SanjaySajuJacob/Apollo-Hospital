@@ -1,11 +1,14 @@
 from django.db import models
-import datetime
+import datetime, random
 from django.utils import timezone
 from django.utils import timezone
 from django.contrib.auth.models import AbstractUser
 from django.core.validators import RegexValidator
 
 # Create your models here.
+def random_id():
+    return str(random.randint(10000, 99999))
+
 class Employee(models.Model):
     emp_id = models.CharField(max_length = 100, primary_key = True)
     emp_name = models.CharField(max_length = 100)
