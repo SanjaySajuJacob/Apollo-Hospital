@@ -1,8 +1,15 @@
 {% extends 'apollo/header.html' %}
 {% load crispy_forms_tags %}
 {% block content %}
-<body style="background-image: url('/static/apollo/JLSS_BG_Patregister.png'); background-size: cover; background-position: center; height: 100%;">
+
 <img class = "Logo" src = "/static/apollo/JLSS.png" alt = "Apollo Hospital" align = "right" style = "width: 75px; height: 75px; border-radius: 50%;">
+
+{% if check %}
+  <br><br><br><br><br><br><br><br>
+  <h3 class = "text-white" align = "center"><span class="badge bg-danger">{{message}}</span></h3>
+
+{% else %}
+<body style="background-image: url('/static/apollo/JLSS_BG_Patregister.png'); background-size: cover; background-position: center; height: 100%;">
 <div class="container py-5">
   <h2 class = "text-white" align = "center">Register</h2><br><br><br>
   <form method = "POST">
@@ -43,8 +50,8 @@
     <button class = "btn btn-primary" type = "submit">Register</button>
   </div>
   </form>
-  <br><br>
-  <p class = "text-center fw-bold" style = "color:#002557 font-family:Helvetica">Already have an account? <a href = "/apollo/patlogin" style = "color:#002557"<u>Login here</u></a></p>
+  <br><br><h6 class = "text-center fw-bold" style = "color:#002557 font-family:Helvetica">Please note the auto generated Patient ID since it will be useful later.</h6>
+  <h6 class = "text-center fw-bold" style = "color:#002557 font-family:Helvetica">Already have an account? <a href = "/apollo/patlogin" style = "color:#002557"<u>Login here</u></a></h6>
 </div>
-
+{% endif %}
 {% endblock %}

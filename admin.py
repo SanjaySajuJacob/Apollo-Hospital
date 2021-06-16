@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.db import models
-from .models import Accomodation, CovApply, EmpFinance, Employee, PatFinance, Patients, Vaccines
+from .models import *
 # Register your models here.
 class AccomodationAdmin(admin.ModelAdmin):
     fieldsets = [(None, {'fields':['room_type', 'no_of_beds_left', 'cost']})]
@@ -23,6 +23,9 @@ class PatientsAdmin(admin.ModelAdmin):
 class VaccinesAdmin(admin.ModelAdmin):
     fieldsets = [(None, {'fields':['vaccine_name', 'vaccine_stock', 'vaccine_cost']})]
 
+class LeaveAdmin(admin.ModelAdmin):
+    fieldsets = [(None, {'fields':['emp_id', 'start_date', 'end_date', 'reason_for_leave']})]
+
 admin.site.register(Accomodation, AccomodationAdmin)
 admin.site.register(CovApply, CovApplyAdmin)
 admin.site.register(EmpFinance, EmpFinanceAdmin)
@@ -30,3 +33,4 @@ admin.site.register(Employee, EmployeeAdmin)
 admin.site.register(PatFinance, PatFinanceAdmin)
 admin.site.register(Patients, PatientsAdmin)
 admin.site.register(Vaccines, VaccinesAdmin)
+admin.site.register(Leave, LeaveAdmin)

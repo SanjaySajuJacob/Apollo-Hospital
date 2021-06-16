@@ -9,12 +9,12 @@
   <form method = "POST">
     {% csrf_token %}
     <div class = "form-row align-center text-white">
-      <div class = "form-group col-md-4 mb-0">
+      <div class = "form-group col-md-3 mb-0">
         {{ form.patient_id|as_crispy_field }}
       </div>
     </div>
     <div class = "form-row align-center text-white">
-      <div class = "form-group col-md-4 mb-0">
+      <div class = "form-group col-md-3 mb-0">
         {{ form.password|as_crispy_field }}
       </div>
     </div><br><br>

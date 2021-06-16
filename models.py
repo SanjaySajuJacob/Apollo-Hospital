@@ -50,7 +50,7 @@ class PatFinance(models.Model):
     date = models.DateField('payment_date')
     payment_id = models.CharField(max_length = 100)
     def __str__(self):
-        return self.patient_id
+        return str(self.patient_id)
 
 class Vaccines(models.Model):
     vaccine_name = models.CharField(max_length = 100, primary_key = True)
@@ -68,8 +68,8 @@ class CovApply(models.Model):
 
 class Leave(models.Model):
     emp_id = models.ForeignKey(Employee, on_delete = models.CASCADE)
-    start_date = models.DateTimeField('start date')
-    end_date = models.DateTimeField('end date')
+    start_date = models.DateField('start date')
+    end_date = models.DateField('end date')
     reason_for_leave = models.CharField(max_length = 1000)
     def __str__(self):
-        return self.emp_id
+        return str(self.emp_id)
