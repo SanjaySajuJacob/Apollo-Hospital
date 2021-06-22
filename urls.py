@@ -12,5 +12,7 @@ urlpatterns = [
                 path('pathomepage',views.pathomepage, name = 'pathomepage'),
                 path('leavepage', views.leavepage, name = 'leavepage'),
                 path('emphomepage', views.emphomepage, name = 'emphomepage'),
-                path('contactus', views.contactus, name = 'contactpage')
+                path('contactus', views.contactus, name = 'contactpage'),
+                path('payverifiy',views.payverifiy, name ='payverifiy'),
+                path('aboutus',views.aboutus,name = 'aboutus'),
 ]

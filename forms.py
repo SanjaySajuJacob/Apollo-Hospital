@@ -4,7 +4,7 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit
-from .models import Patients, Accomodation, PatFinance, CovApply, Leave
+from .models import Patients, Accomodation, PatFinance, CovApply, Leave, Vaccines
 from django.core.exceptions import ValidationError
 from django.utils import timezone
 import random, datetime
@@ -13,6 +13,8 @@ import random, datetime
 room_types = Accomodation.objects.filter(no_of_beds_left__gt = 0)
 payment_methods = (('None', 'Please select an option'),('Net Banking', 'Net Banking'), ('Cash', 'Cash'), ('Credit Card', 'Credit Card'), ('Debit Card', 'Debit Card'))
 results = (('None','-------'),('Positive','Positive'),('Negative','Negative'))
+vaccine_name = Vaccines.objects.filter(vaccine_stock__gt = 0)
+
 
 class NewUserForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
@@ -121,10 +123,14 @@ class CovidCare(ModelForm):
         super()._init_(*args, **kwargs)
         self.helper = FormHelper()
 
+    def check(covid_test_result):
+        if covid_test_result == "Positive":
+            raise forms.ValidationError('Not elligible for vaccination')
+
 
     patient_id = forms.CharField(widget = forms.TextInput(attrs = {'placeholder':'Patient ID'}))
-    covid_test_result = forms.ChoiceField(choices=results)
-    vaccine_name = forms.CharField(widget = forms.TextInput(attrs = {'placeholder':'vaccine name'}))
+    covid_test_result = forms.ChoiceField(choices=results,validators =[check])
+    vaccine_name = forms.ModelChoiceField(queryset = vaccine_name)
 
     class Meta:
         model = User
@@ -163,7 +169,7 @@ class LeaveForm(ModelForm):
         cleaned_data = super().clean()
         date1 = cleaned_data.get('start_date')
         date2 = cleaned_data.get('end_date')
-        if date1 and date2 and (date1 < date2):
+        if date1 and date2 and (date1 > date2):
             raise ValidationError('Enter valid dates')
 
 class ContactForm(ModelForm):
@@ -177,3 +183,21 @@ class ContactForm(ModelForm):
     class Meta:
         model = User
         fields = ("email_id", "content")
+
+class Empfinform(ModelForm):
+    def _init_(self, *args, **kwargs):
+        super()._init_(*args, **kwargs)
+        self.helper = FormHelper()
+
+    payment_id = forms.CharField(widget = forms.TextInput(attrs = {'placeholder':'Payment ID'}))
+
+    class Meta:
+        model = User
+        fields = ("payment_id",)
+
+    def save(self, commit = True):
+        user = super(Empfinform, self).save(commit = False)
+        user.patient_id = self.cleaned_data['payment_id']
+        if commit:
+            user.save()
+        return user

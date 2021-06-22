@@ -6,8 +6,6 @@ from django.contrib.auth.models import AbstractUser
 from django.core.validators import RegexValidator
 
 # Create your models here.
-def random_id():
-    return str(random.randint(10000, 99999))
 
 class Employee(models.Model):
     emp_id = models.CharField(max_length = 100, primary_key = True)
@@ -49,6 +47,7 @@ class PatFinance(models.Model):
     amount_paid = models.IntegerField(default = 0)
     date = models.DateField('payment_date')
     payment_id = models.CharField(max_length = 100)
+    is_paid = models.BooleanField(default = False)
     def __str__(self):
         return str(self.patient_id)
 

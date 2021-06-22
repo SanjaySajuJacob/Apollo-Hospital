@@ -1,8 +1,8 @@
 from django.shortcuts import render, redirect
 from django.urls import reverse
-from .models import Employee, Patients, Accomodation, PatFinance, Leave
+from .models import *
 from django.contrib import messages
-from .forms import NewUserForm, EmpLoginForm, PatLoginForm, PaymentForm, CovidCare, LeaveForm, ContactForm
+from .forms import *
 from django.contrib.auth import login
 from django import forms
 from django.utils import timezone
@@ -72,7 +72,7 @@ def patloginpage(request):
 def paymentpage(request):
     if request.method == "POST":
         form = PaymentForm(request.POST)
-        if form.is_valid():
+        if form.is_valid() and Patients.objects.filter(patient_id = request.POST.get('patient_id')).exists():
             paid = True
             patient_id = Patients.objects.get(patient_id=request.POST.get('patient_id'))
             room = Patients.objects.values('room_type').filter(patient_id=patient_id)
@@ -88,7 +88,9 @@ def paymentpage(request):
             message = "The total cost and your Payment ID are as shown. Kindly go to the payment counter to make your payment. Thank you."
             return render(request, 'apollo/payment.html', context = {'paid':paid, 'message':message, 'cost':patfin.amount_paid, 'payment_id':patfin.payment_id, 'form':form})
         else:
-            messages.error(request, "Something went wrong. Please try again")
+            message = "Invalid details entered. Please try again."
+            notpaid = True
+            return render(request, 'apollo/payment.html', context = {'message':message, 'notpaid':notpaid})
     else:
         form = PaymentForm
         return render(request, 'apollo/payment.html', context = {'form':form})
@@ -97,23 +99,30 @@ def covidcare(request):
     if request.method == "POST":
         form = CovidCare(request.POST)
         if form.is_valid() and Patients.objects.filter(patient_id=request.POST.get('patient_id')).exists():
-            patient_id = request.POST.get('patient_id')
-            vaccine_name = request.POST.get('vaccine_name')
+            cov = CovApply()
             covid_test_result = request.POST.get('covid_test_result')
-            if CovApply.objects.filter(patient_id=patient_id).count() == 1:
-                user = form.save()
-                user.save()
+            vaccine_name = request.POST.get('vaccine_name')
+            vacc = Vaccines.objects.get(vaccine_name=request.POST.get("vaccine_name"))
+            vacc.vaccine_stock = vacc.vaccine_stock -1
+            vacc.save()
+            if CovApply.objects.filter(patient_id=request.POST.get('patient_id')).count() == 0:
+                patient_id=Patients.objects.get(patient_id=request.POST.get('patient_id'))
+                cov.patient_id = patient_id
+                cov.vaccine_name = vacc
+                cov.covid_test_result = request.POST.get("covid_test_result")
+                cov.save()
                 messages.success(request, "Application was successful")
-                return redirect("apollo/pathomepage.html")
-            else:
-                messages.error("Patient already registered")
-                return render(request, 'apollo/payment.html', context = {'form':form})
+                return redirect("apollo:pathomepage")
+            elif CovApply.objects.filter(patient_id=request.POST.get('patient_id')).count() == 1:
+                isapplied = True
+                message = "User has already applied"
+                return render(request, 'apollo/covidcare.html',context = {'message': message, 'isapplied':isapplied})
         else:
-            messages.error(request, "Please enter valid details")
-            return render(request, "apollo/covidcare.html", context = {'form':form})
+            messages.error(request, "Invalid creds")
+            return render(request=request, template_name="apollo/covidcare.html", context = {'form':form})
     else:
         form = CovidCare
-    return render(request, "apollo/covidcare.html", context = {'form':form})
+    return render(request=request, template_name="apollo/covidcare.html", context = {'form':form})
 
 def pathomepage(request):
     return render(request, 'apollo/pathomepage.html')
@@ -131,7 +140,7 @@ def leavepage(request):
             leave.end_date = request.POST.get('end_date')
             leave.reason_for_leave = request.POST.get('reason_for_leave')
             leave.save()
-            return render(request, 'apollo/pathomepage.html', context = {'form':form, 'approved':'True', 'message':'Your leave has been granted'})
+            return render(request, 'apollo/leavepage.html', context = {'form':form, 'approved':'True', 'message':'Your leave request has been submitted'})
         else:
             return render(request, 'apollo/leavepage.html', context = {'form':form, 'not_approved':'True','message':'Please enter valid details.'})
     else:
@@ -155,3 +164,33 @@ def contactus(request):
     else:
         form = ContactForm
         return render(request, 'apollo/contactus.html', context = {'form':form})
+
+def payverifiy(request):
+    if request.method == "POST":
+        form = Empfinform(request.POST)
+        if form.is_valid():
+            if PatFinance.objects.filter(payment_id=request.POST.get('payment_id')).count() == 1:
+                inst = PatFinance.objects.values('is_paid').filter(payment_id__exact = request.POST.get('payment_id'))
+                if inst[0]['is_paid'] == True:
+                    message = "The payment has already been accepted already been accepted"
+                    ispaid = True
+                    return render(request, 'apollo/payverify.html',{'form':form,'ispaid':ispaid, 'message':message})
+                else:
+                    isnotpaid=True
+                    inst.update(is_paid =True)
+                    pat_id = PatFinance.objects.values('patient_id').filter(payment_id__exact = request.POST.get('payment_id'))
+                    cost = PatFinance.objects.values('amount_paid').filter(payment_id__exact = request.POST.get('payment_id'))
+                    pay_method=PatFinance.objects.values('payment_method').filter(payment_id__exact = request.POST.get('payment_id'))
+                    return render(request, 'apollo/payverify.html', context = {'form':form,'pat_id':pat_id[0]['patient_id'],'cost':cost[0]['amount_paid'],'pay_method':pay_method[0]['payment_method'],'isnotpaid':isnotpaid})
+            else:
+                message = "The payment ID does not exist."
+                isnotverified = True
+                return render(request, 'apollo/payverify.html',{'form':form,'isnotverified':isnotverified,'message':message})
+        else:
+            messages.error(request, "Something went wrong. Please try again")
+    else:
+        form = Empfinform
+    return render(request, 'apollo/payverify.html', context = {'form':form})
+
+def aboutus(request):
+    return render(request,'apollo/aboutus.html')
